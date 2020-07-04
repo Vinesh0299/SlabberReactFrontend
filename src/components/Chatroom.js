@@ -1,17 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
     StyleSheet,
     View,
     Text,
     SafeAreaView,
 } from 'react-native';
-import io from 'socket.io-client';
-import { createStackNavigator } from '@react-navigation/stack';
 import { TextInput } from 'react-native-gesture-handler';
 
-const Stack = createStackNavigator();
-
-export default class Chats extends React.Component {
+export default class Chatroom extends React.Component {
 
     constructor(props) {
         super(props);
@@ -22,10 +18,9 @@ export default class Chats extends React.Component {
     }
 
     componentDidMount() {
-        this.socket = io('https://slabber.herokuapp.com/');
-        this.socket.emit('join', {room: '15'});
-        this.socket.on('newMessage', (message) => {
-            if(message.socketid !== this.socket.id) {
+        this.props.route.params.socket.emit('join', { room: this.props.route.params.room });
+        this.props.route.params.socket.on('newMessage', (message) => {
+            if(message.socketid !== this.props.route.params.socket.id) {
                 message['style'] = 'leftMessage';
                 this.setState({ chatMessages: [...this.state.chatMessages, message] });
             }
@@ -33,9 +28,9 @@ export default class Chats extends React.Component {
     }
 
     submitChatMessage() {
-        this.socket.emit('createMessage', {
+        this.props.route.params.socket.emit('createMessage', {
             text: this.state.chatMessage,
-            room: '15'
+            room: this.props.route.params.room
         });
         this.setState({ chatMessages: [...this.state.chatMessages, {text: this.state.chatMessage, style: 'rightMessage'}] });
         this.setState({ chatMessage: '' });
@@ -45,8 +40,19 @@ export default class Chats extends React.Component {
         var i = 1;
         const chatMessages = this.state.chatMessages.map((chatMessage) => {
             i += 1;
-            if(chatMessage.style === 'rightMessage') return <Text key={i} style={styles.rightMessage}>{chatMessage.text}</Text>
-            else return <Text key={i} style={styles.leftMessage}>{chatMessage.text}</Text>
+            if(chatMessage.style === 'rightMessage') {
+                return (
+                    <View key={i} style={styles.rightMessage}>
+                        <Text>{chatMessage.text}</Text>
+                    </View>
+                )
+            } else {
+                return (
+                    <View key={i} style={styles.leftMessage}>
+                        <Text>{chatMessage.text}</Text>
+                    </View>
+                )
+            }
         });
 
         return (
@@ -72,11 +78,14 @@ export default class Chats extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#D3D3D3',
     },
     inputMessage: {
         height: 40,
-        borderWidth: 0.5,
+        width: '100%',
+        position: 'absolute',
+        bottom: 0,
+        backgroundColor: '#fff'
     },
     leftMessage: {
         color: '#FF5733'
