@@ -9,6 +9,12 @@ import io from 'socket.io-client';
 
 const socket = io('https://slabber.herokuapp.com/')
 
+socket.emit('join', { room: '15' });
+socket.emit('join', { room: '16' });
+socket.emit('join', { room: '17' });
+socket.emit('join', { room: '18' });
+socket.emit('join', { room: '19' });
+
 export default class Chats extends React.Component {
     constructor(props) {
         super(props);

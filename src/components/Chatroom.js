@@ -18,21 +18,19 @@ export default class Chatroom extends React.Component {
     }
 
     componentDidMount() {
-        this.props.route.params.socket.emit('join', { room: this.props.route.params.room });
         this.props.route.params.socket.on('newMessage', (message) => {
-            if(message.socketid !== this.props.route.params.socket.id) {
-                message['style'] = 'leftMessage';
-                this.setState({ chatMessages: [...this.state.chatMessages, message] });
+            if(message.socket !== this.props.route.params.socket.id) {
+                this.setState({ chatMessages: [...this.state.chatMessages, {content: message.message, style: 'leftMessage'}] });
             }
         });
     }
 
     submitChatMessage() {
         this.props.route.params.socket.emit('createMessage', {
-            text: this.state.chatMessage,
+            content: this.state.chatMessage,
             room: this.props.route.params.room
         });
-        this.setState({ chatMessages: [...this.state.chatMessages, {text: this.state.chatMessage, style: 'rightMessage'}] });
+        this.setState({ chatMessages: [...this.state.chatMessages, {content: this.state.chatMessage, style: 'rightMessage'}] });
         this.setState({ chatMessage: '' });
     }
 
@@ -43,13 +41,13 @@ export default class Chatroom extends React.Component {
             if(chatMessage.style === 'rightMessage') {
                 return (
                     <View key={i} style={styles.rightMessage}>
-                        <Text>{chatMessage.text}</Text>
+                        <Text>{chatMessage.content}</Text>
                     </View>
                 )
             } else {
                 return (
                     <View key={i} style={styles.leftMessage}>
-                        <Text>{chatMessage.text}</Text>
+                        <Text>{chatMessage.content}</Text>
                     </View>
                 )
             }
@@ -88,9 +86,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     },
     leftMessage: {
-        color: '#FF5733'
+        color: '#FF5733',
     },
     rightMessage: {
-        color: '#110A09'
+        color: '#110A09',
     },
 });
