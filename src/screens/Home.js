@@ -24,7 +24,7 @@ function AllChats() {
   )
 }
 
-export default class Loggedin extends React.Component {
+export default class Home extends React.Component {
   render() {
     return (
       <NavigationContainer>

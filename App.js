@@ -1,11 +1,11 @@
 import React from 'react';
 
-import Loggedin from './src/screens/Loggedin.js';
+import Login from './src/screens/Login.js';
 
 export default class App extends React.Component {
   render() {
     return (
-      <Loggedin />
+      <Login />
     );
   }
 }
