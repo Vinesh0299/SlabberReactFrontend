@@ -1,11 +1,11 @@
 import React from 'react';
 
-import Login from './src/screens/Login.js';
+import Home from './src/screens/Home.js';
 
 export default class App extends React.Component {
   render() {
     return (
-      <Login />
+      <Home />
     );
   }
 }

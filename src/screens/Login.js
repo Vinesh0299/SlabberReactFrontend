@@ -5,8 +5,9 @@ import {
     SafeAreaView,
     StatusBar,
     View,
+    TouchableOpacity,
 } from 'react-native';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { TextInput } from 'react-native-gesture-handler';
 
 export default class Login extends React.Component {
     render() {

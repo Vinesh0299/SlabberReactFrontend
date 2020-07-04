@@ -4,8 +4,14 @@ import {
     View,
     Text,
     SafeAreaView,
+    YellowBox,
+    ScrollView,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+
+YellowBox.ignoreWarnings([
+    'Non-serializable values were found in the navigation state',
+]);
 
 export default class Chatroom extends React.Component {
 
@@ -30,7 +36,7 @@ export default class Chatroom extends React.Component {
             content: this.state.chatMessage,
             room: this.props.route.params.room
         });
-        this.setState({ chatMessages: [...this.state.chatMessages, {content: this.state.chatMessage, style: 'rightMessage'}] });
+        this.setState({ chatMessages: [...this.state.chatMessages, {content: { message: this.state.chatMessage, sender: 'Vinesh', sentAt: new Date() }, style: 'rightMessage'}] });
         this.setState({ chatMessage: '' });
     }
 
@@ -41,13 +47,14 @@ export default class Chatroom extends React.Component {
             if(chatMessage.style === 'rightMessage') {
                 return (
                     <View key={i} style={styles.rightMessage}>
-                        <Text>{chatMessage.content}</Text>
+                        <Text>{chatMessage.content.message}</Text>
                     </View>
                 )
             } else {
                 return (
                     <View key={i} style={styles.leftMessage}>
-                        <Text>{chatMessage.content}</Text>
+                        <Text style={styles.sender}>{chatMessage.content.sender}</Text>
+                        <Text>{chatMessage.content.message}</Text>
                     </View>
                 )
             }
@@ -55,19 +62,19 @@ export default class Chatroom extends React.Component {
 
         return (
             <SafeAreaView style={{ flex: 1 }}>
-                <View style={styles.container}>
+                <ScrollView style={styles.container}>
                     {chatMessages}
-                    <TextInput
-                        style={styles.inputMessage}
-                        autoCorrect={false}
-                        placeholder='Type Message...'
-                        value={this.state.chatMessage}
-                        onSubmitEditing={() => this.submitChatMessage()}
-                        onChangeText={(chatMessage) => {
-                            this.setState({ chatMessage });
-                        }}
-                    />
-                </View>
+                </ScrollView>
+                <TextInput
+                    style={styles.inputMessage}
+                    autoCorrect={false}
+                    placeholder='Type Message...'
+                    value={this.state.chatMessage}
+                    onSubmitEditing={() => this.submitChatMessage()}
+                    onChangeText={(chatMessage) => {
+                        this.setState({ chatMessage });
+                    }}
+                />
             </SafeAreaView>
         );
     }
@@ -75,8 +82,12 @@ export default class Chatroom extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#D3D3D3',
+        backgroundColor: '#84c9ff',
+        marginBottom: 41
+    },
+    sender: {
+        fontSize: 10,
+        fontWeight: 'bold'
     },
     inputMessage: {
         height: 40,
@@ -86,9 +97,22 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     },
     leftMessage: {
+        alignSelf: 'flex-start',
         color: '#FF5733',
+        backgroundColor: '#fff',
+        padding: 10,
+        borderRadius: 15,
+        borderBottomLeftRadius: 0,
+        margin: 5,
+        maxWidth: '80%'
     },
     rightMessage: {
         color: '#110A09',
+        alignSelf: 'flex-end',
+        backgroundColor: '#84c9aa',
+        padding: 10,
+        borderRadius: 15,
+        borderBottomRightRadius: 0,
+        margin: 5
     },
 });
