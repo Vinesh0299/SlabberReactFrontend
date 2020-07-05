@@ -10,6 +10,15 @@ import {
 import { TextInput } from 'react-native-gesture-handler';
 
 export default class Signup extends React.Component {
+
+    constructor(props) {
+        super(props);
+    }
+
+    login() {
+        console.log('login');
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -32,11 +41,11 @@ export default class Signup extends React.Component {
                     secureTextEntry={true}
                 />
                 <TouchableOpacity style={styles.button}>
-                    <Text style={{ color: '#eee', paddingHorizontal: '37%' }}>Sign Up</Text>
+                    <Text style={{ color: '#eee', paddingHorizontal: '36%' }}>Sign Up</Text>
                 </TouchableOpacity>
                 <View style={styles.loginTextContent}>
                     <Text style={{ fontSize: 16 }}>Already have an account? </Text>
-                    <Text style={styles.loginButton}>Log In</Text>
+                    <Text style={styles.loginButton} onPress={() => {this.props.navigation.navigate('Login')}}>Log In</Text>
                 </View>
             </SafeAreaView>
         );

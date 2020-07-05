@@ -10,6 +10,19 @@ import {
 import { TextInput } from 'react-native-gesture-handler';
 
 export default class ForgotPassword extends React.Component {
+    
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: ''
+        }
+    }
+
+    reset() {
+        console.log(this.state.email);
+        this.setState({ email: '' });
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -22,13 +35,17 @@ export default class ForgotPassword extends React.Component {
                     selectionColor='#fff'
                     style={styles.inputBox}
                     placeholder="Enter your email..."
+                    value={this.state.email}
+                    onChangeText={(email) => {
+                        this.setState({ email });
+                    }}
                     placeholderTextColor='#eee'
                 />
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => {this.reset()}}>
                     <Text style={{ color: '#eee', paddingHorizontal: '38%' }}>Reset</Text>
                 </TouchableOpacity>
                 <View style={styles.goBackTextContent}>
-                    <Text style={styles.goBackButton}>Click here </Text>
+                    <Text style={styles.goBackButton} onPress={() => {this.props.navigation.navigate('Login')}}>Click here </Text>
                     <Text style={{ fontSize: 16 }}>to go back to login</Text>
                 </View>
             </SafeAreaView>

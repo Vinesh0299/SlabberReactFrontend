@@ -9,7 +9,23 @@ import {
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
+import Signup from './Signup.js';
+
 export default class Login extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: '',
+            password: ''
+        }
+    }
+
+    submitDetail() {
+        this.setState({ email: '' });
+        this.setState({ password: '' });
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -23,20 +39,32 @@ export default class Login extends React.Component {
                     style={styles.inputBox}
                     placeholder="Enter your email..."
                     placeholderTextColor='#eee'
+                    value={this.state.email}
+                    onChangeText={(email) => {
+                        this.setState({ email });
+                    }}
                 />
                 <TextInput
                     selectionColor='#fff'
                     style={styles.inputBox}
                     placeholder="Enter your password..."
                     placeholderTextColor='#eee'
+                    value={this.state.password}
+                    onChangeText={(password) => {
+                        this.setState({ password });
+                    }}
                     secureTextEntry={true}
                 />
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => {this.submitDetail()}}>
                     <Text style={{ color: '#eee', paddingHorizontal: '37%' }}>Log In</Text>
                 </TouchableOpacity>
+                <View style={styles.resetPassword}>
+                    <Text style={{ fontSize: 16 }}>Forgot Password? Click here to </Text>
+                    <Text style={styles.signupButton} onPress={() => {this.props.navigation.navigate('ForgotPassword')}}>Reset</Text>
+                </View>
                 <View style={styles.signupTextContent}>
                     <Text style={{ fontSize: 16 }}>Don't have an account yet? </Text>
-                    <Text style={styles.signupButton}>Sign Up</Text>
+                    <Text style={styles.signupButton} onPress={() => {this.props.navigation.navigate('Signup')}}>Sign Up</Text>
                 </View>
             </SafeAreaView>
         );
@@ -71,8 +99,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         height: 40,
         alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: '40%'
+        justifyContent: 'center'
     },
     signupTextContent: {
         flexGrow: 1,
@@ -84,5 +111,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
         color: '#2686cf'
+    },
+    resetPassword: {
+        marginTop: 5,
+        flexDirection: 'row',
+        marginBottom: '40%'
     }
 });

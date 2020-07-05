@@ -1,11 +1,11 @@
 import React from 'react';
 
-import Home from './src/screens/Home.js';
+import Routes from './src/screens/Routes.js';
 
 export default class App extends React.Component {
   render() {
     return (
-      <Home />
+      <Routes />
     );
   }
 }
