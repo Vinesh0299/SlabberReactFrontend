@@ -27,13 +27,11 @@ function AllChats() {
 export default class Home extends React.Component {
   render() {
     return (
-      <NavigationContainer>
-        <Tab.Navigator initialRouteName="Chats">
-          <Tab.Screen name="Profile" component={Profile} />
-          <Tab.Screen name="Chats" component={AllChats} />
-          <Tab.Screen name="Add friend" component={AddFriend} />
-        </Tab.Navigator>
-      </NavigationContainer>
+      <Tab.Navigator initialRouteName="Chats">
+        <Tab.Screen name="Profile" component={Profile} />
+        <Tab.Screen name="Chats" component={AllChats} />
+        <Tab.Screen name="Add friend" component={AddFriend} />
+      </Tab.Navigator>
     );
   }
 }

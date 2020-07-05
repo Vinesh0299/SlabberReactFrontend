@@ -45,7 +45,7 @@ export default class ForgotPassword extends React.Component {
                     <Text style={{ color: '#eee', paddingHorizontal: '38%' }}>Reset</Text>
                 </TouchableOpacity>
                 <View style={styles.goBackTextContent}>
-                    <Text style={styles.goBackButton} onPress={() => {this.props.navigation.navigate('Login')}}>Click here </Text>
+                    <Text style={styles.goBackButton} onPress={() => {this.props.navigation.goBack()}}>Click here </Text>
                     <Text style={{ fontSize: 16 }}>to go back to login</Text>
                 </View>
             </SafeAreaView>

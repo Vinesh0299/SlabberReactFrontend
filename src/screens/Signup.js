@@ -45,7 +45,7 @@ export default class Signup extends React.Component {
                 </TouchableOpacity>
                 <View style={styles.loginTextContent}>
                     <Text style={{ fontSize: 16 }}>Already have an account? </Text>
-                    <Text style={styles.loginButton} onPress={() => {this.props.navigation.navigate('Login')}}>Log In</Text>
+                    <Text style={styles.loginButton} onPress={() => {this.props.navigation.goBack()}}>Log In</Text>
                 </View>
             </SafeAreaView>
         );

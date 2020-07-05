@@ -9,8 +9,6 @@ import {
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
-import Signup from './Signup.js';
-
 export default class Login extends React.Component {
 
     constructor(props) {
@@ -24,6 +22,10 @@ export default class Login extends React.Component {
     submitDetail() {
         this.setState({ email: '' });
         this.setState({ password: '' });
+        /*this.props.navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }]
+        });*/
     }
 
     render() {
