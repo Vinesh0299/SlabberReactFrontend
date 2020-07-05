@@ -22,10 +22,10 @@ export default class Login extends React.Component {
     submitDetail() {
         this.setState({ email: '' });
         this.setState({ password: '' });
-        /*this.props.navigation.reset({
+        this.props.navigation.reset({
             index: 0,
             routes: [{ name: 'Home' }]
-        });*/
+        });
     }
 
     render() {
