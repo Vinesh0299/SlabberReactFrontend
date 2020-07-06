@@ -30,16 +30,15 @@ socket.on('newMessage', (message) => {
     var style = 'rightMessage';
     if(message.socket !== socket.id) {
         style = 'leftMessage';
-        //this.setState({ chatMessages: [...this.state.chatMessages, {content: message.message, sender: 'Katewa', style: 'leftMessage'}] });
     }
     Realm.open({ schema: [messageSchema] }).then((realm) => {
         realm.write(() => {
             realm.create('Messages', {
-                message: message.message,
-                sender: 'Katewa',
-                sentAt: 'today',
+                message: message.message.message,
+                sender: message.message.sender,
+                sentAt: message.message.date,
                 style: style,
-                chatroom: '15'
+                chatroom: message.room
             });
         });
     });

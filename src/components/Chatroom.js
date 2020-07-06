@@ -42,26 +42,36 @@ export default class Chatroom extends React.Component {
     componentDidMount() {
         Realm.open({ schema: [messageSchema] }).then((realm) => {
             const messages = realm.objects('Messages').filtered(`chatroom == '${this.props.route.params.room}'`);
-            console.log(messages);
             const chatMessages = messages.map((message) => {
-                return {content: message.message, sender: message.sender, style: message.style}
+                date = new Date(message.sentAt);
+                return {content: message.message, sender: message.sender, style: message.style, sentAt: date.getHours()+':'+date.getMinutes()}
             });
             this.setState({ chatMessages });
         });
         this.props.route.params.socket.on('newMessage', (message) => {
             if(message.socket !== this.props.route.params.socket.id) {
-                this.setState({ chatMessages: [...this.state.chatMessages, {content: message.message, sender: 'Katewa', style: 'leftMessage'}] });
+                date = new Date(message.message.date);
+                this.setState({ chatMessages: [...this.state.chatMessages, {content: message.message.message, sender: message.message.sender, style: 'leftMessage', sentAt: date.getHours()+':'+date.getMinutes()}] });
             }
         });
     }
 
     submitChatMessage() {
-        this.props.route.params.socket.emit('createMessage', {
-            content: this.state.chatMessage,
-            room: this.props.route.params.room
-        });
-        this.setState({ chatMessages: [...this.state.chatMessages, {content: this.state.chatMessage, sender: 'Vinesh', style: 'rightMessage'}] });
-        this.setState({ chatMessage: '' });
+        if(this.state.chatMessage.length > 0) {
+            date = new Date();
+            this.setState({ chatMessages: [...this.state.chatMessages, {content: this.state.chatMessage, sender: 'Vinesh', style: 'rightMessage', sentAt: date.getHours()+':'+date.getMinutes()}] });
+            date = JSON.parse(JSON.stringify(date));
+            const content = {
+                message: this.state.chatMessage,
+                date: date,
+                sender: 'Vinesh'
+            }
+            this.props.route.params.socket.emit('createMessage', {
+                content: content,
+                room: this.props.route.params.room
+            });
+            this.setState({ chatMessage: '' });
+        }
     }
 
     render() {
@@ -72,13 +82,17 @@ export default class Chatroom extends React.Component {
                 return (
                     <View key={i} style={styles.rightMessage}>
                         <Text>{chatMessage.content}</Text>
+                        <Text style={styles.messageDate}>{chatMessage.sentAt}</Text>
                     </View>
                 )
             } else {
                 return (
                     <View key={i} style={styles.leftMessage}>
                         <Text style={styles.sender}>{chatMessage.sender}</Text>
-                        <Text>{chatMessage.content}</Text>
+                        <View>
+                            <Text>{chatMessage.content}</Text>
+                            <Text style={styles.messageDate}>{chatMessage.sentAt}</Text>
+                        </View>
                     </View>
                 )
             }
@@ -138,12 +152,20 @@ const styles = StyleSheet.create({
     rightMessage: {
         color: '#110A09',
         alignSelf: 'flex-end',
-        backgroundColor: '#90EE90',
+        backgroundColor: '#bcf5bc',
         padding: 10,
         paddingVertical: 5,
         borderRadius: 15,
         borderBottomRightRadius: 0,
         margin: 2,
-        marginRight: 5
+        marginRight: 5,
+        maxWidth: '80%'
+    },
+    messageDate: {
+        fontSize: 8,
+        marginTop: 7,
+        marginLeft: 5,
+        color: '#616161',
+        alignSelf: 'flex-end'
     },
 });
