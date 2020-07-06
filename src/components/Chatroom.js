@@ -33,34 +33,25 @@ export default class Chatroom extends React.Component {
             chatMessage: '',
             chatMessages: []
         };
-        this.props.route.params.socket.on('newMessage', (message) => {
-            var style = 'rightMessage';
-            if(message.socket !== this.props.route.params.socket.id) {
-                style = 'leftMessage';
-                this.setState({ chatMessages: [...this.state.chatMessages, {content: message.message, sender: 'Katewa', style: 'leftMessage'}] });
-            }
-            Realm.open({ schema: [messageSchema] }).then((realm) => {
-                realm.write(() => {
-                    realm.create('Messages', {
-                        message: message.message,
-                        sender: 'Katewa',
-                        sentAt: 'today',
-                        style: style,
-                        chatroom: this.props.route.params.room
-                    });
-                });
-            });
-        });
+    }
+
+    static navigationOptions = {
+        header: null
     }
 
     componentDidMount() {
         Realm.open({ schema: [messageSchema] }).then((realm) => {
             const messages = realm.objects('Messages').filtered(`chatroom == '${this.props.route.params.room}'`);
+            console.log(messages);
             const chatMessages = messages.map((message) => {
                 return {content: message.message, sender: message.sender, style: message.style}
             });
-            console.log(chatMessages);
             this.setState({ chatMessages });
+        });
+        this.props.route.params.socket.on('newMessage', (message) => {
+            if(message.socket !== this.props.route.params.socket.id) {
+                this.setState({ chatMessages: [...this.state.chatMessages, {content: message.message, sender: 'Katewa', style: 'leftMessage'}] });
+            }
         });
     }
 

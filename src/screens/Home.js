@@ -14,7 +14,7 @@ export default class Home extends React.Component {
   }
   render() {
     return (
-      <Tab.Navigator initialRouteName="Chats" props={this.props}>
+      <Tab.Navigator initialRouteName="Chats">
         <Tab.Screen name="Profile" component={Profile} />
         <Tab.Screen name="Chats" component={Chats} />
         <Tab.Screen name="Add friend" component={AddFriend} />

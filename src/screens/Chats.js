@@ -9,12 +9,41 @@ import io from 'socket.io-client';
 
 const socket = io('https://slabber.herokuapp.com/')
 const Realm = require('realm');
+const messageSchema = {
+    name: 'Messages',
+    properties: {
+        message: 'string',
+        sender: 'string',
+        sentAt: 'string',
+        style: 'string',
+        chatroom: 'string'
+    }
+}
 
 socket.emit('join', { room: '15' });
 socket.emit('join', { room: '16' });
 socket.emit('join', { room: '17' });
 socket.emit('join', { room: '18' });
 socket.emit('join', { room: '19' });
+
+socket.on('newMessage', (message) => {
+    var style = 'rightMessage';
+    if(message.socket !== socket.id) {
+        style = 'leftMessage';
+        //this.setState({ chatMessages: [...this.state.chatMessages, {content: message.message, sender: 'Katewa', style: 'leftMessage'}] });
+    }
+    Realm.open({ schema: [messageSchema] }).then((realm) => {
+        realm.write(() => {
+            realm.create('Messages', {
+                message: message.message,
+                sender: 'Katewa',
+                sentAt: 'today',
+                style: style,
+                chatroom: '15'
+            });
+        });
+    });
+});
 
 export default class Chats extends React.Component {
     constructor(props) {
