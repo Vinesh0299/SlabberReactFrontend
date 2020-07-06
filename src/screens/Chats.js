@@ -19,29 +19,28 @@ socket.emit('join', { room: '19' });
 export default class Chats extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { realm: null }
     }
     
     render() {
         return (
             <SafeAreaView>
-                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom 15', { socket: socket, room: '15' })}>
+                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom', { socket: socket, room: '15' })}>
                     <Text style={styles.chatroomHeading}>Chatroom 15</Text>
                     <Text style={styles.chatroomDescriptoin}>Short description here</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom 16', { socket: socket, room: '16' })}>
+                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom', { socket: socket, room: '16' })}>
                     <Text style={styles.chatroomHeading}>Chatroom 16</Text>
                     <Text style={styles.chatroomDescriptoin}>Short description here</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom 17', { socket: socket, room: '15' })}>
+                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom', { socket: socket, room: '17' })}>
                     <Text style={styles.chatroomHeading}>Chatroom 17</Text>
                     <Text style={styles.chatroomDescriptoin}>Short description here</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom 18', { socket: socket, room: '15' })}>
+                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom', { socket: socket, room: '18' })}>
                     <Text style={styles.chatroomHeading}>Chatroom 18</Text>
                     <Text style={styles.chatroomDescriptoin}>Short description here</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom 19', { socket: socket, room: '15' })}>
+                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom', { socket: socket, room: '19' })}>
                     <Text style={styles.chatroomHeading}>Chatroom 19</Text>
                     <Text style={styles.chatroomDescriptoin}>Short description here</Text>
                 </TouchableOpacity>
