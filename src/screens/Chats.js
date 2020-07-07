@@ -19,12 +19,27 @@ const messageSchema = {
         chatroom: 'string'
     }
 }
+const userSchema = {
+    name: 'User',
+    properties: {
+        token: 'string',
+        name: 'string',
+        email: 'string',
+        chats: 'string?[]',
+        friends: 'string?[]'
+    }
+}
 
 socket.emit('join', { room: '15' });
 socket.emit('join', { room: '16' });
 socket.emit('join', { room: '17' });
 socket.emit('join', { room: '18' });
 socket.emit('join', { room: '19' });
+
+Realm.open({ schema: [userSchema] }).then((realm) => {
+    const user = realm.objects('User');
+    console.log(user);
+});
 
 socket.on('newMessage', (message) => {
     var style = 'rightMessage';

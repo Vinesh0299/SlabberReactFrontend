@@ -28,7 +28,6 @@ export default class Signup extends React.Component {
 
     signup() {
         const user = {
-            username: this.state.username,
             fullname: this.state.name,
             gender: this.state.gender.value,
             email: this.state.email,
@@ -45,12 +44,15 @@ export default class Signup extends React.Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(user)
-            })
-            .then(response => response.json())
-            .then((json) => {
-                if(json.error === 0) Alert.alert('User added successfully', 'Check your mail to verfiy your account');
-                else if(json.error === 1) Alert.alert('Username already taken', 'Try using another username');
-                else if(json.error === 2) Alert.alert('Email already registered', 'This email is already registered with us');
+            }).then((response) => {
+                if(response.status === 409) Alert.alert('Email already used', 'This email is already registered with an account. Try another email');
+                else if(response.status === 200) Alert.alert('User added successfully', 'You can now login after verifying your email');
+                else if(response.status === 500) Alert.alert(response.json().message);
+                else {
+                    response.json().then(data => {
+                        Alert.alert('There was an error', data.message);
+                    });
+                }
             });
         }
     }
@@ -71,16 +73,6 @@ export default class Signup extends React.Component {
                     value={this.state.name}
                     onChangeText={(name) => {
                         this.setState({ name });
-                    }}
-                />
-                <TextInput
-                    selectionColor='#fff'
-                    style={styles.inputBox}
-                    placeholder="Create your Username..."
-                    placeholderTextColor='#eee'
-                    value={this.state.username}
-                    onChangeText={(username) => {
-                        this.setState({ username });
                     }}
                 />
                 <TextInput

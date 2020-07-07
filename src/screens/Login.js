@@ -6,8 +6,21 @@ import {
     StatusBar,
     View,
     TouchableOpacity,
+    Alert,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+
+const Realm = require('realm');
+const userSchema = {
+    name: 'User',
+    properties: {
+        token: 'string',
+        name: 'string',
+        email: 'string',
+        chats: 'string?[]',
+        friends: 'string?[]'
+    }
+}
 
 export default class Login extends React.Component {
 
@@ -20,11 +33,52 @@ export default class Login extends React.Component {
     }
 
     submitDetail() {
-        this.setState({ email: '' });
-        this.setState({ password: '' });
-        this.props.navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home' }]
+        const user = {
+            email: this.state.email,
+            password: this.state.password
+        }
+        fetch('https://slabber.herokuapp.com/login/', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        }).then((response) => {
+            if(response.status === 404) Alert.alert('Incorrect Email', 'No user has registrated with this email. Try a different email or create a new account');
+            else if(response.status === 406) Alert.alert('Incorrect Password');
+            else if(response.status === 401) Alert.alert('Email not verified', 'This user account is not verified yet. Please verify it first before logging in. Check your email for verification link');
+            else if(response.status === 200) {
+                response.json().then((data) => {
+                    Realm.open({ schema: [userSchema] }).then((realm) => {
+                        const storedUser = realm.objects('User').filtered(`email == '${data.email}'`);
+                        if(!storedUser.length) {
+                            realm.write(() => {
+                                let newUser = realm.create('User', {
+                                    token: data.token,
+                                    name: data.name,
+                                    email: data.email
+                                });
+
+                                if(data.chatrooms.length) {
+                                    data.chatrooms.forEach((chatroom) => {
+                                        newUser.chats.push(chatroom.chatId.$id);
+                                    });
+                                }
+                                if(data.friends.length) {
+                                    data.friends.forEach((friend) => {
+                                        newUser.friends.push(friend.friendId.$id);
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+                this.props.navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Home' }]
+                });
+            }
         });
     }
 
