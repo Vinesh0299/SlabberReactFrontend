@@ -9,18 +9,7 @@ import {
     Alert,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-
-const Realm = require('realm');
-const userSchema = {
-    name: 'User',
-    properties: {
-        token: 'string',
-        name: 'string',
-        email: 'string',
-        chats: 'string?[]',
-        friends: 'string?[]'
-    }
-}
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class Login extends React.Component {
 
@@ -30,6 +19,41 @@ export default class Login extends React.Component {
             email: '',
             password: ''
         }
+    }
+
+    componentDidMount() {
+        AsyncStorage.getItem('User').then((data) => {
+            const user = {
+                token: JSON.parse(data).token
+            }
+            fetch('https://slabber.herokuapp.com/login/', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            }).then((response) => {
+                if(response.status === 200) {
+                    response.json().then((newData) => {
+                        const saveData = {
+                            message: JSON.parse(data).message,
+                            token: JSON.parse(data).token,
+                            name: JSON.parse(data).name,
+                            email: JSON.parse(data).email,
+                            chatrooms: newData.chatrooms,
+                            friends: newData.friends
+                        }
+                        AsyncStorage.setItem('User', JSON.stringify(saveData)).then((data) => {
+                            this.props.navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Home' }]
+                            });
+                        });
+                    });
+                }
+            });
+        });
     }
 
     submitDetail() {
@@ -50,33 +74,12 @@ export default class Login extends React.Component {
             else if(response.status === 401) Alert.alert('Email not verified', 'This user account is not verified yet. Please verify it first before logging in. Check your email for verification link');
             else if(response.status === 200) {
                 response.json().then((data) => {
-                    Realm.open({ schema: [userSchema] }).then((realm) => {
-                        const storedUser = realm.objects('User').filtered(`email == '${data.email}'`);
-                        if(!storedUser.length) {
-                            realm.write(() => {
-                                let newUser = realm.create('User', {
-                                    token: data.token,
-                                    name: data.name,
-                                    email: data.email
-                                });
-
-                                if(data.chatrooms.length) {
-                                    data.chatrooms.forEach((chatroom) => {
-                                        newUser.chats.push(chatroom.chatId.$id);
-                                    });
-                                }
-                                if(data.friends.length) {
-                                    data.friends.forEach((friend) => {
-                                        newUser.friends.push(friend.friendId.$id);
-                                    });
-                                }
-                            });
-                        }
+                    AsyncStorage.setItem('User', JSON.stringify(data)).then((data) => {
+                        this.props.navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Home' }]
+                        });
                     });
-                });
-                this.props.navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Home' }]
                 });
             }
         });

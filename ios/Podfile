@@ -79,6 +79,8 @@ target 'SlabberReactFrontend' do
 
   pod 'RealmJS', :path => '../node_modules/realm'
 
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
   target 'SlabberReactFrontendTests' do
     inherit! :complete
     # Pods for testing

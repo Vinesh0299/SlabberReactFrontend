@@ -4,8 +4,10 @@ import {
     Text,
     TouchableOpacity,
     SafeAreaView,
+    ScrollView,
 } from 'react-native';
 import io from 'socket.io-client';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const socket = io('https://slabber.herokuapp.com/')
 const Realm = require('realm');
@@ -19,26 +21,16 @@ const messageSchema = {
         chatroom: 'string'
     }
 }
-const userSchema = {
-    name: 'User',
-    properties: {
-        token: 'string',
-        name: 'string',
-        email: 'string',
-        chats: 'string?[]',
-        friends: 'string?[]'
-    }
-}
 
-socket.emit('join', { room: '15' });
-socket.emit('join', { room: '16' });
-socket.emit('join', { room: '17' });
-socket.emit('join', { room: '18' });
-socket.emit('join', { room: '19' });
+var rooms = [];
 
-Realm.open({ schema: [userSchema] }).then((realm) => {
-    const user = realm.objects('User');
-    console.log(user);
+AsyncStorage.getItem('User')
+.then(data => JSON.parse(data))
+.then((data) => {
+    data.chatrooms.forEach((chatroom) => {
+        rooms.push({name: chatroom.roomName, id: chatroom.roomId.$id});
+        socket.emit('join', { room: chatroom.roomId.$id });
+    });
 });
 
 socket.on('newMessage', (message) => {
@@ -62,31 +54,27 @@ socket.on('newMessage', (message) => {
 export default class Chats extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            chatroom: []
+        }
     }
     
     render() {
+        var i = 0;
+        const chatrooms = rooms.map((room) => {
+            i += 1;
+            return (
+                <TouchableOpacity key={i} style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom', { socket: socket, room: room.id })}>
+                    <Text style={styles.chatroomHeading}>{room.name}</Text>
+                    <Text style={styles.chatroomDescriptoin}>Short description here</Text>
+                </TouchableOpacity>
+            )
+        })
         return (
             <SafeAreaView>
-                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom', { socket: socket, room: '15' })}>
-                    <Text style={styles.chatroomHeading}>Chatroom 15</Text>
-                    <Text style={styles.chatroomDescriptoin}>Short description here</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom', { socket: socket, room: '16' })}>
-                    <Text style={styles.chatroomHeading}>Chatroom 16</Text>
-                    <Text style={styles.chatroomDescriptoin}>Short description here</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom', { socket: socket, room: '17' })}>
-                    <Text style={styles.chatroomHeading}>Chatroom 17</Text>
-                    <Text style={styles.chatroomDescriptoin}>Short description here</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom', { socket: socket, room: '18' })}>
-                    <Text style={styles.chatroomHeading}>Chatroom 18</Text>
-                    <Text style={styles.chatroomDescriptoin}>Short description here</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.chatroomClickable} onPress={() => this.props.navigation.navigate('Chatroom', { socket: socket, room: '19' })}>
-                    <Text style={styles.chatroomHeading}>Chatroom 19</Text>
-                    <Text style={styles.chatroomDescriptoin}>Short description here</Text>
-                </TouchableOpacity>
+                <ScrollView>
+                    {chatrooms}
+                </ScrollView>
             </SafeAreaView>
         );
     }
